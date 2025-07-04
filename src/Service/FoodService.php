@@ -1,32 +1,38 @@
 <?php
 namespace App\Service;
 
+use App\DTO\FoodFilter;
+use App\Entity\Food;
 use App\Entity\Fruit;
 use App\Entity\Vegetable;
 use App\Factory\FoodFactory;
+use App\Repository\FoodRepository;
 use App\Repository\FruitRepository;
 use App\Repository\VegetableRepository;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 class FoodService
 {
   private $foodFactory;
+  private $foodRepository;
+
   private $entityManager;
 
-  private $vegetableRepository;
-
-  private $fruitRepository;
-
   public function __construct(FoodFactory $foodFactory,
-  EntityManagerInterface $entityManager,
-  FruitRepository $fruitRepository,
-  VegetableRepository $vegetableRepository)
+    FoodRepository $foodRepository,
+    EntityManagerInterface $entityManager)
   {
     $this->foodFactory = $foodFactory;
+    $this->foodRepository = $foodRepository;
     $this->entityManager = $entityManager;
-    $this->fruitRepository = $fruitRepository;
-    $this->vegetableRepository = $vegetableRepository;
   }
+
+  public function getFilteredFoods($filters): array
+  {
+    return $this->foodRepository->findByFilter(new FoodFilter($filters));
+  }
+
   public function processRequest(array $data): array
   {
     foreach ($data as $item) {
