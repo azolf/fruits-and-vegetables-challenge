@@ -14,35 +14,10 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Food[]    findAll()
  * @method Food[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class FoodRepository extends ServiceEntityRepository
+abstract class FoodRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, $entityName)
     {
-        parent::__construct($registry, Food::class);
+        parent::__construct($registry, entityClass: $entityName);
     }
-
-//    /**
-//     * @return Food[] Returns an array of Food objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Food
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
