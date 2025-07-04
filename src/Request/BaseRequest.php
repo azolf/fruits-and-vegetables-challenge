@@ -20,11 +20,11 @@ abstract class BaseRequest
     $messages = ['errors' => []];
 
     foreach ($errors as $message) {
-        $messages['errors'][] = [
-            'property' => $message->getPropertyPath(),
-            'value' => $message->getInvalidValue(),
-            'message' => $message->getMessage(),
-        ];
+      $messages['errors'][] = [
+        'property' => $message->getPropertyPath(),
+        'value' => $message->getInvalidValue(),
+        'message' => $message->getMessage(),
+      ];
     }
 
     return $messages;
@@ -37,7 +37,17 @@ abstract class BaseRequest
 
   protected function populate(): void
   {
-    foreach ($this->getRequest()->toArray() as $property => $value) {
+    if ($this->getRequest()->request->count() > 0) {
+      $this->setProperties($this->getRequest()->toArray());
+    }
+    if ($this->getRequest()->query->count() > 0) {
+      $this->setProperties($this->getRequest()->query->all());
+    }
+  }
+
+  private function setProperties(array $properties): void
+  {
+    foreach ($properties as $property => $value) {
       if (property_exists($this, $property)) {
         $this->{$property} = $value;
       }
