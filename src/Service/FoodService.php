@@ -35,4 +35,11 @@ class FoodService
   {
     return $this->foodRepository->addFromArray($data);
   }
+
+  public function createBatch(array $data): array
+  {
+    return array_map(function($data) {
+      return $this->create($data);
+    }, $data);
+  }
 }

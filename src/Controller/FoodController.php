@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Request\Food\CreateRequest;
+use App\Request\Food\CreateBatchRequest;
 use App\Request\Food\IndexRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,6 +42,24 @@ class FoodController extends AbstractController
     }
 
     $result = $foodService->create($request->toArray());
+    $jsonContent = $serializer->serialize($result, format: 'json');
+    return JsonResponse::fromJsonString($jsonContent);
+  }
+
+
+  #[Route('/foods-batch', name: 'create_food_batch', methods: ['POST'])]
+  public function createBatch(
+    CreateBatchRequest $request,
+    FoodService $foodService,
+    SerializerInterface $serializer
+  ): JsonResponse {
+
+    $errors = $request->validate();
+    if (count($errors['errors']) > 0) {
+      return JsonResponse::fromJsonString(json_encode($errors));
+    }
+
+    $result = $foodService->createBatch($request->toArray());
     $jsonContent = $serializer->serialize($result, format: 'json');
     return JsonResponse::fromJsonString($jsonContent);
   }

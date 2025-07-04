@@ -44,7 +44,7 @@ abstract class BaseRequest
     }
   }
 
-  private function setProperties(array $properties): void
+  protected function setProperties(array $properties): void
   {
     foreach ($properties as $property => $value) {
       if (property_exists($this, $property)) {

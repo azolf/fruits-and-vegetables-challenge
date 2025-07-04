@@ -28,6 +28,7 @@ class CreateRequest extends BaseRequest
 
   #[Assert\NotBlank([])]
   #[Assert\Type('numeric')]
+  #[Assert\GreaterThan(0)]
   protected $quantity;
   
   #[Assert\NotBlank([])]
