@@ -20,4 +20,20 @@ abstract class FoodRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, entityClass: $entityName);
     }
+    public function add(Food $food): void
+    {
+        $this->_em->persist($food);
+        $this->_em->flush();
+    }
+
+    public function remove(Food $food): void
+    {
+        $this->_em->remove($food);
+        $this->_em->flush();
+    }
+
+    public function list(): array
+    {
+        return $this->findAll();
+    }
 }
