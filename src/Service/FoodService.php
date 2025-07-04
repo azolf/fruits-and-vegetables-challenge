@@ -24,6 +24,7 @@ class FoodService
       $this->entityManager->persist($food);
       $result[] = $food;
     }
+    $this->entityManager->flush();
     
     return $result;
   }
