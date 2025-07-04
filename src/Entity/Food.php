@@ -22,9 +22,6 @@ abstract class Food
     #[ORM\Column]
     private ?float $quantity = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $type = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -42,26 +39,18 @@ abstract class Food
         return $this;
     }
 
-    public function getQuantity(): ?float
+    public function getQuantity(string $unit = 'g'): ?float
     {
-        return $this->quantity;
+        return $unit === 'kg' ? $this->quantity / 1000 : $this->quantity;
     }
 
-    public function setQuantity(float $quantity): static
+    public function setQuantity(float $quantity, string $unit = 'g'): static
     {
+        if ($unit === 'kg') {
+            $quantity = $quantity * 1000;
+        }
+
         $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): static
-    {
-        $this->type = $type;
 
         return $this;
     }
