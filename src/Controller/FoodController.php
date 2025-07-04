@@ -24,7 +24,7 @@ class FoodController extends AbstractController
       return JsonResponse::fromJsonString(json_encode($errors));
     }
     $result = $foodService->getFilteredFoods($request->toArray());
-    $jsonContent = $serializer->serialize($result, format: 'json');
+    $jsonContent = $serializer->serialize($result, format: 'json', context: ['unit' => $request->getUnit()]);
     return JsonResponse::fromJsonString($jsonContent);
   }
 

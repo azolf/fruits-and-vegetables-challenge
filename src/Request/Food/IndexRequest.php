@@ -18,6 +18,11 @@ class IndexRequest extends BaseRequest
     ];
   }
 
+  public function getUnit()
+  {
+    return $this->unit;
+  }
+
   #[Assert\Type('string')]
   protected $name;
 
@@ -29,4 +34,7 @@ class IndexRequest extends BaseRequest
   
   #[Assert\Type('numeric')]
   protected $maxWeight;
+
+  #[Assert\Choice(['kg', 'g'])]
+  protected $unit = 'g';
 }
