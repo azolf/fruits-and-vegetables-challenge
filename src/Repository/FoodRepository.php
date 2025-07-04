@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Food;
 use App\Entity\Fruit;
 use App\Entity\Vegetable;
+use App\Factory\FoodFactory;
 use AppendIterator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,14 +22,27 @@ use App\DTO\FoodFilter;
  */
 class FoodRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $foodFactory;
+
+    public function __construct(ManagerRegistry $registry, FoodFactory $foodFactory)
     {
         parent::__construct($registry, entityClass: Food::class);
+        $this->foodFactory = $foodFactory;
     }
     public function add(Food $food): void
     {
         $this->_em->persist($food);
         $this->_em->flush();
+    }
+
+    public function addFromArray(array $data): Food
+    {
+        $food = $this->foodFactory->create($data['type']);
+        $food->setName($data['name']);
+        $food->setQuantity($data['quantity'], $data['unit']);
+        $this->add($food);
+
+        return $food;
     }
 
     public function remove(Food $food): void
