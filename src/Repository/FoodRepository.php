@@ -22,68 +22,68 @@ use App\DTO\FoodFilter;
  */
 class FoodRepository extends ServiceEntityRepository
 {
-    private $foodFactory;
+  private $foodFactory;
 
-    public function __construct(ManagerRegistry $registry, FoodFactory $foodFactory)
-    {
-        parent::__construct($registry, entityClass: Food::class);
-        $this->foodFactory = $foodFactory;
+  public function __construct(ManagerRegistry $registry, FoodFactory $foodFactory)
+  {
+    parent::__construct($registry, entityClass: Food::class);
+    $this->foodFactory = $foodFactory;
+  }
+  public function add(Food $food): void
+  {
+    $this->_em->persist($food);
+    $this->_em->flush();
+  }
+
+  public function addFromArray(array $data): Food
+  {
+    $food = $this->foodFactory->create($data['type']);
+    $food->setName($data['name']);
+    $food->setQuantity($data['quantity'], $data['unit']);
+    $this->add($food);
+
+    return $food;
+  }
+
+  public function remove(Food $food): void
+  {
+    $this->_em->remove($food);
+    $this->_em->flush();
+  }
+
+  public function list(): array
+  {
+    return $this->findAll();
+  }
+
+  public function findByFilter(FoodFilter $filter): array
+  {
+    $qb = $this->createQueryBuilder('f');
+
+    if ($filter->name) {
+      $qb->andWhere('f.name LIKE :name')
+        ->setParameter('name', '%' . $filter->name . '%');
     }
-    public function add(Food $food): void
-    {
-        $this->_em->persist($food);
-        $this->_em->flush();
+
+    if ($filter->minWeight) {
+      $qb->andWhere('f.quantity >= :minWeight')
+        ->setParameter('minWeight', $filter->minWeight);
     }
 
-    public function addFromArray(array $data): Food
-    {
-        $food = $this->foodFactory->create($data['type']);
-        $food->setName($data['name']);
-        $food->setQuantity($data['quantity'], $data['unit']);
-        $this->add($food);
-
-        return $food;
+    if ($filter->maxWeight) {
+      $qb->andWhere('f.quantity <= :maxWeight')
+        ->setParameter('maxWeight', $filter->maxWeight);
     }
 
-    public function remove(Food $food): void
-    {
-        $this->_em->remove($food);
-        $this->_em->flush();
+    if ($filter->type === 'fruit') {
+      $qb->andWhere('f INSTANCE OF App\Entity\Fruit');
     }
 
-    public function list(): array
-    {
-        return $this->findAll();
+    if ($filter->type === 'vegetable') {
+      $qb->andWhere('f INSTANCE OF App\Entity\Vegetable');
     }
 
-    public function findByFilter(FoodFilter $filter): array
-    {
-        $qb = $this->createQueryBuilder('f');
 
-        if ($filter->name) {
-            $qb->andWhere('f.name LIKE :name')
-               ->setParameter('name', '%' . $filter->name . '%');
-        }
-
-        if ($filter->minWeight) {
-            $qb->andWhere('f.quantity >= :minWeight')
-               ->setParameter('minWeight', $filter->minWeight);
-        }
-
-        if ($filter->maxWeight) {
-            $qb->andWhere('f.quantity <= :maxWeight')
-               ->setParameter('maxWeight', $filter->maxWeight);
-        }
-
-        if ($filter->type === 'fruit') {
-            $qb->andWhere('f INSTANCE OF App\Entity\Fruit');
-        }
-
-        if ($filter->type === 'vegetable') {
-            $qb->andWhere('f INSTANCE OF App\Entity\Vegetable');
-        }
-
-
-        return $qb->getQuery()->getResult();
-    }
+    return $qb->getQuery()->getResult();
+  }
 }
