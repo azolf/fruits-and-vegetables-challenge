@@ -37,7 +37,7 @@ abstract class BaseRequest
 
   protected function populate(): void
   {
-    if ($this->getRequest()->request->count() > 0) {
+    if (!empty($this->getRequest()->getContent())) {
       $this->setProperties($this->getRequest()->toArray());
     }
     if ($this->getRequest()->query->count() > 0) {
