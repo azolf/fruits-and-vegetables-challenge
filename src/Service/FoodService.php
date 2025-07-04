@@ -33,6 +33,11 @@ class FoodService
     return $this->foodRepository->findByFilter(new FoodFilter($filters));
   }
 
+  public function create(array $data): Food
+  {
+    return $this->foodRepository->addFromArray($data);
+  }
+
   public function processRequest(array $data): array
   {
     foreach ($data as $item) {
